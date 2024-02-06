@@ -67,8 +67,8 @@ static void quickSort(int arr[], int low, int high, struct my_context *ctx) {
 		ctx->sec_finish = now.tv_sec;
 		ctx->nsec_finish = now.tv_nsec;
 
-		ctx->time += (ctx->sec_finish - ctx->sec_start) * 1e9;
-		ctx->time += (ctx->nsec_finish - ctx->nsec_start) * 1e-6;
+		ctx->time += (ctx->sec_finish - ctx->sec_start) * 1e3; //to ms
+		ctx->time += (ctx->nsec_finish - ctx->nsec_start) * 1e-6; //to ms
 
 		coro_yield();
 
@@ -114,8 +114,8 @@ coroutine_func_f(void *context) {
 
 	clock_gettime(CLOCK_MONOTONIC, &finish);
 
-	ctx->time += (finish.tv_sec - ctx->sec_start) * 1e9;
-	ctx->time += (finish.tv_nsec - ctx->nsec_start) * 1e-6;
+	ctx->time += (finish.tv_sec - ctx->sec_start) * 1e3; //to ms
+	ctx->time += (finish.tv_nsec - ctx->nsec_start) * 1e-6; // to ms
 
 	printf("%s: switch count %lld, work time: %f ms\n", ctx->name, coro_switch_count(this), ctx->time);
 
@@ -190,8 +190,8 @@ main(int argc, char **argv) {
 	struct timespec finish;
 	clock_gettime(CLOCK_MONOTONIC, &finish);
 
-	double time_taken = (finish.tv_sec - start.tv_sec) * 1e9; 
-	time_taken = (time_taken + (finish.tv_nsec - start.tv_nsec)) * 1e-6; 
+	double time_taken = (finish.tv_sec - start.tv_sec) * 1e9; //nano
+	time_taken = (time_taken + (finish.tv_nsec - start.tv_nsec)) * 1e-6; //ms
 	printf("Total time: %f ms\n", time_taken);
 
 
