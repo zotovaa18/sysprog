@@ -16,7 +16,7 @@ struct my_context {
 	int nsec_start;
 	int sec_finish;
 	int nsec_finish;
-    double time;
+	double time;
 };
 
 static struct my_context *
@@ -32,35 +32,35 @@ my_context_new(const char *name, char *inputFile, int** array_p, int* size_p) {
 
 static void
 my_context_delete(struct my_context *ctx) {
-    free(ctx->name);
-    free(ctx);
+	free(ctx->name);
+	free(ctx);
 }
 
 static void
 swap(int *a, int *b) {
-    int temp = *a;
-    *a = *b;
-    *b = temp;
+	int temp = *a;
+	*a = *b;
+	*b = temp;
 }
 
 static int partition(int arr[], int low, int high) {
-    int pivot = arr[high];
-    int i = (low - 1);
-    for (int j = low; j <= high - 1; j++) {
-        if (arr[j] < pivot) {
-            i++;
-            swap(&arr[i], &arr[j]);
-        }
-    }
-    swap(&arr[i + 1], &arr[high]);
-    return (i + 1);
+	int pivot = arr[high];
+	int i = (low - 1);
+	for (int j = low; j <= high - 1; j++) {
+		if (arr[j] < pivot) {
+			i++;
+			swap(&arr[i], &arr[j]);
+		}
+	}
+	swap(&arr[i + 1], &arr[high]);
+	return (i + 1);
 }
 
 static void quickSort(int arr[], int low, int high, struct my_context *ctx) {
     if (low < high) {
-        int pivotIndex = partition(arr, low, high);
-        quickSort(arr, low, pivotIndex - 1, ctx);
-        quickSort(arr, pivotIndex + 1, high, ctx);
+		int pivotIndex = partition(arr, low, high);
+		quickSort(arr, low, pivotIndex - 1, ctx);
+		quickSort(arr, pivotIndex + 1, high, ctx);
 
 		struct timespec now;
 		clock_gettime(CLOCK_MONOTONIC, &now);
@@ -82,7 +82,7 @@ static void quickSort(int arr[], int low, int high, struct my_context *ctx) {
 static int
 coroutine_func_f(void *context) {
 	struct coro *this = coro_this();
-    struct my_context *ctx = context;
+	struct my_context *ctx = context;
 
 	struct timespec start, finish;
 	clock_gettime(CLOCK_MONOTONIC, &start);
@@ -126,22 +126,22 @@ coroutine_func_f(void *context) {
 
 int
 main(int argc, char **argv) {
-    if (argc < 2) {
-        printf("Usage: %s <file1> <file2> ...\n", argv[0]);
-        return 1;
-    }
+	if (argc < 2) {
+		printf("Usage: %s <file1> <file2> ...\n", argv[0]);
+		return 1;
+	}
 
-    struct timespec start;
+	struct timespec start;
 	clock_gettime(CLOCK_MONOTONIC, &start);
-	
+
 	// Initialize our coroutine global cooperative scheduler.
-    coro_sched_init();
+	coro_sched_init();
 
 	int coroNum = argc - 1;
-	
+
 	int *arrays[coroNum];
 	int sizes[coroNum];
-	
+
 	for (int i = 0; i < coroNum; i++) {
 		char name[16]; 
 		sprintf(name, "coro_%d", i); 
@@ -159,7 +159,7 @@ main(int argc, char **argv) {
 		printf("Error opening file output.txt");
 		return 1;
 	}
-	
+
 	int *indices = calloc(coroNum, sizeof(int));
 	int minIndex, minVal;
 
@@ -190,10 +190,10 @@ main(int argc, char **argv) {
 	struct timespec finish;
 	clock_gettime(CLOCK_MONOTONIC, &finish);
 
-    double time_taken = (finish.tv_sec - start.tv_sec) * 1e9; 
-    time_taken = (time_taken + (finish.tv_nsec - start.tv_nsec)) * 1e-6; 
-    printf("Total time: %f ms\n", time_taken);
+	double time_taken = (finish.tv_sec - start.tv_sec) * 1e9; 
+	time_taken = (time_taken + (finish.tv_nsec - start.tv_nsec)) * 1e-6; 
+	printf("Total time: %f ms\n", time_taken);
 
-	
-    return 0;
+
+	return 0;
 }
